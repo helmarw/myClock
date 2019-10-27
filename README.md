@@ -1,5 +1,5 @@
 # myClock
-## v0.10.4 PRE-RELEASE
+## v0.10.4 PRE-RELEASE mod by helmarw
 ### Copyright 2019 by David M Denney &lt;dragondaud@gmail.com&gt;
 
 Master repository: https://github.com/dragondaud/myClock
@@ -63,3 +63,13 @@ build.sh will build, update, flash OTA or Serial, myClock on Linux, MacOS or Win
 ### Notes
 
 Switching between ESP8266 and ESP32 platform requires deleting preferences.txt which the update script will do automatically when updating core.
+
+### Modifications/fixes
+
+- added support for MH-ET LIVE D1 mini to PxMatrix.h v1.3.0. MH-ET LIVE D1 mini has different SPI ports than the Wemos d1 Mini    
+  (see pdf for changes). added the modifided PxMatrix.h as PxMatrix_mod.h to source
+- added display of date
+- fixed an issue when reading temperature from DS18b20 sensor
+- fixed couple of issues when in 24h display mode
+
+
