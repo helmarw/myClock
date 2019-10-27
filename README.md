@@ -73,5 +73,5 @@ Switching between ESP8266 and ESP32 platform requires deleting preferences.txt w
 
 ### Known Issues
 
-- i could not get it to work with ESP8266, like Wemos D1 min or NodeMCU 12E, after settind SSID+Password device i locked in    bootloop. Dont know what wrong yet. I strongly recoomend using ESP32, for me the MH-ET LIVE D1 mini with WeMos-Matrix-Shield works very well
+- i could not get it to work with ESP8266, like Wemos D1 mini or NodeMCU 12E, after setting SSID+Password device is locked in    bootloop. Dont know what went wrong yet. I strongly recoomend using ESP32, for me the MH-ET LIVE D1 mini with WeMos-Matrix-Shield works very well!
 
