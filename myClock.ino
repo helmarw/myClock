@@ -4,6 +4,9 @@
      Switching between ESP8266 and ESP32 platform requires deleting preferences.txt which the update script will do automatically when updating core.
      Designed to run on a Wemos-D1-Mini or NodeMCU, configured for CPU Freq 160Mhz and Flash size 4M (1M SPIFFS). 
      notice: i treide for different ESP8266 boards, and non of them i got to work, so better use an ESP32, e.g. MH-ET LIVE D1 mini, that works for me at least
+     for resetting flash in ESP use "esptool.py --port /dev/cu.SLAB_USBtoUART  erase_flash" or simply "esptool.py erase_flash" will choose port automatically
+     use "pip install esptool" for installing esptool in commandline
+     
 */
 
 //  ESP8266 version 2.5.2 required https://github.com/esp8266/Arduino
