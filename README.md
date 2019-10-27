@@ -72,4 +72,9 @@ Switching between ESP8266 and ESP32 platform requires deleting preferences.txt w
 - fixed an issue when reading temperature from DS18b20 sensor
 - fixed couple of issues when in 24h display mode
 
+### Known Issues
+
+- i could not get it to work with ESP8266, like Wemos D1 min or NodeMCU 12E, after settind SSID+Password device i locked in    
+  bootloop. Dont know what wrong yet. I strongly recoomend using ESP32, for me the MH-ET LIVE D1 mini with WeMos-Matrix-Shield
+  works very well
 
