@@ -5,8 +5,7 @@
      Designed to run on a Wemos-D1-Mini or NodeMCU, configured for CPU Freq 160Mhz and Flash size 4M (1M SPIFFS). 
      notice: i treide for different ESP8266 boards, and non of them i got to work, so better use an ESP32, e.g. MH-ET LIVE D1 mini, that works for me at least
      for resetting flash in ESP use "esptool.py --port /dev/cu.SLAB_USBtoUART  erase_flash" or simply "esptool.py erase_flash" will choose port automatically
-     use "pip install esptool" for installing esptool in commandline
-     
+     use "pip install esptool" for installing esptool in commandline    
 */
 
 //  ESP8266 version 2.5.2 required https://github.com/esp8266/Arduino
@@ -122,7 +121,7 @@ void setup() {
 
   readSPIFFS(); // fetch stored configuration
 
-  display.begin(16); //default for pxMatrix <=1.3.0 but PxMatrix.h needs to be modified for cutom ISP and setMuxDelay)
+  display.begin(16); //default for pxMatrix <=1.3.0 but PxMatrix.h needs to be modified for cutom ISP and setMuxDelay, added as PxMatrix_mod.h)
   //display.begin(16, CLK, MOSI, MISO, SS); //for pxMatrix >=v1.6.0
   //display.begin(16, 14, 13, 12, 4); // for Wemos D1 mini
  // display.begin(16, 18, 23, 19, 21);  // for MH-ET LIVE D1 mini 
