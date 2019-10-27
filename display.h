@@ -6,7 +6,7 @@
 #include <Arduino.h>
 
 #define double_buffer
-#include <PxMatrix.h> // https://github.com/2dom/PxMatrix
+#include "PxMatrix_mod.h" // https://github.com/2dom/PxMatrix local mod for MH-ET LIVE D1 mini based on v1.3.0 used also in Digit.h
 #include <gfxfont.h>
 #include "fonts/TomThumb.h"
 

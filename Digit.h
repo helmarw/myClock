@@ -2,7 +2,7 @@
 #define DIGIT_H
 
 #include <Arduino.h>
-#include <PxMatrix.h>
+#include "PxMatrix_mod.h" / https://github.com/2dom/PxMatrix local mod for MH-ET LIVE D1 mini based on v1.3.0 used also in display.h 
 
 class Digit {
   public:

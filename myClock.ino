@@ -6,14 +6,14 @@
      notice: i treide for different ESP8266 boards, and non of them i got to work, so better use an ESP32, e.g. MH-ET LIVE D1 mini, that works for me at least
 */
 
-//  ESP8266 requires https://github.com/esp8266/Arduino
+//  ESP8266 version 2.5.2 required https://github.com/esp8266/Arduino
 //  https://github.com/esp8266/Arduino#using-git-version-basic-instructions
 
-//  ESP32 requires https://github.com/espressif/arduino-esp32
+//  ESP32 version 1.0.4 required https://github.com/espressif/arduino-esp32
 //  https://github.com/espressif/arduino-esp32#installation-instructions
 
-#include <ArduinoJson.h>        // https://github.com/bblanchon/ArduinoJson/releases/latest
-#include <WiFiManager.h>        // https://github.com/tzapu/WiFiManager/tree/development
+#include <ArduinoJson.h>        // works with version 5.13.5 (doesnt work with >=6) https://github.com/bblanchon/ArduinoJson/releases/latest
+#include <WiFiManager.h>        // works with version 1.0.0 https://github.com/tzapu/WiFiManager/tree/development
 #include <ArduinoOTA.h>
 #include <FS.h>
 #include <time.h>
