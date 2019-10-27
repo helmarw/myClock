@@ -257,7 +257,7 @@ void loop() {
       if (m0 != digit2.Value()) digit2.Morph(m0);
       if (m1 != digit3.Value()) digit3.Morph(m1);
       pMM = mm;
-      OUT.printf_P(PSTR("%02d:%02d %.3s %02d.%02d.%04d LDR:%d Mem:%d Weather:%s RoomTemp:%d \n"), hh, mm, wday_name[wd], dd, my, yy, light, ESP.getFreeHeap(), description, Temp); // output debug once per minute
+      OUT.printf_P(PSTR("%02d:%02d %3s %02d.%02d.%04d LDR:%d MEM:%d %s DS18:%d \n"), hh, mm, wday_name[wd], dd, my, yy, light, ESP.getFreeHeap(), description.c_str(), Temp); // output debug once per minute
     }
     if (hh != pHH) {    // update hours, if changed
       //if (hh > 23) {
