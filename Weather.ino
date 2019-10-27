@@ -1,6 +1,7 @@
 // obtain and display weather information from openweathermap.org
+String conditions ="test123";
 
-void getWeather() {             // Using openweathermap.org
+String getWeather() {             // Using openweathermap.org
   wDelay = pNow + WDELAY;       // delay between weather updates
   display.setCursor(0, row4);   // any error displayed in red on bottom row
   display.setTextColor(myRED);
@@ -47,18 +48,18 @@ void getWeather() {             // Using openweathermap.org
         else display.setTextColor(myColor);
         display.fillRect(0, 0, 64, 6, myBLACK);
 #ifdef DS18
-        display.setCursor(0, row1);
-        display.printf_P(PSTR("%2d/%2d%c%s %2d%% %2d %s"), Temp, (int)round(temperature),
+        display.setCursor(7, row1);
+        display.printf_P(PSTR("  /%2d%c%s %2d%% %2d %s"), (int)round(temperature),
                          142, celsius ? "C" : "F", humidity, (int)round(wind), dir.c_str());
 #else
-        display.setCursor(9, row1);
-        display.printf_P(PSTR("% 2d%c%s %2d%% %2d %s"), (int)round(temperature),
+        display.setCursor(7, row1);
+        display.printf_P(PSTR("%2d%c%s %2d%% %2d %s"), (int)round(temperature),
                          142, celsius ? "C" : "F", humidity, (int)round(wind), dir.c_str());
 #endif
         String description = weather["description"];
         description.replace(F("intensity "), "");   // english description too long sometimes
         description = utf8ascii(description);       // fix UTF-8 characters
-        int id = weather["id"];
+        id = weather["id"];
         int i = id / 100;
         switch (i) {
           case 2: // Thunderstorms
@@ -87,12 +88,13 @@ void getWeather() {             // Using openweathermap.org
         if (w < 64) x1 = (68 - w) >> 1;         // center weather description (getTextBounds returns too long)
         display.setCursor(x1, row4);
         display.print(description);
+        conditions = description.c_str();
 #ifdef SYSLOG
         syslog.logf("getWeather: %dF|%d%%RH|%d%s|%s",
                     (int)round(temperature), humidity, (int)round(wind), dir.c_str(), description.c_str());
 #endif
-        OUT.printf_P(PSTR("%2dF, %2d%%, %d %s (%d), %s (%d) \r\n"),
-                     (int)round(temperature), humidity, (int)round(wind), dir.c_str(), deg, description.c_str(), id);
+        OUT.printf_P(PSTR("%2d%s, %2d%%, %d %s (%d), %s (%d) \r\n"),
+                     (int)round(temperature), celsius ? "C" : "F", humidity, (int)round(wind), dir.c_str(), deg, description.c_str(), id);
       } else {
         display.print(F("json fail"));
 #ifdef SYSLOG
@@ -111,6 +113,7 @@ void getWeather() {             // Using openweathermap.org
     }
   }
   http.end();
+  return conditions;
 } // getWeather
 
 String degreeDir(int degrees) {

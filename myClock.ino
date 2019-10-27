@@ -1,6 +1,9 @@
 /*   myClock -- ESP8266 WiFi NTP Clock for pixel displays
      Copyright (c) 2019 David M Denney <dragondaud@gmail.com>
      distributed under the terms of the MIT License
+     Switching between ESP8266 and ESP32 platform requires deleting preferences.txt which the update script will do automatically when updating core.
+     Designed to run on a Wemos-D1-Mini or NodeMCU, configured for CPU Freq 160Mhz and Flash size 4M (1M SPIFFS). 
+     notice: i treide for different ESP8266 boards, and non of them i got to work, so better use an ESP32, e.g. MH-ET LIVE D1 mini, that works for me at least
 */
 
 //  ESP8266 requires https://github.com/esp8266/Arduino
@@ -28,9 +31,9 @@ WebServer server(80);
 #endif
 
 #define APPNAME "myClock"
-#define VERSION "0.10.4"
+#define VERSION "0.10.4 Mod by HW"
 #define ADMIN_USER "admin"    // WebServer logon username
-//#define DS18                // enable DS18B20 temperature sensor
+#define DS18                // enable DS18B20 temperature sensor
 //#define SYSLOG              // enable SYSLOG support
 #define LIGHT               // enable LDR light sensor
 #define WDELAY 900          // delay 15 min between weather updates
@@ -47,17 +50,27 @@ Stream & OUT = SerialBT;
 Stream & OUT = Serial;
 #endif
 
-String tzKey;                     // API key from https://timezonedb.com/register
-String owKey;                     // API key from https://home.openweathermap.org/api_keys
-String softAPpass = "ConFigMe";   // password for SoftAP config and WebServer logon, minimum 8 characters
-uint8_t brightness = 255;         // 0-255 display brightness
+String tzKey = "YK79A4XZSC3U";    // API key from https://timezonedb.com/register
+String owKey = "e0ca5d834d0d4c8d23e76e5a53b0e86e";  // API key from https://home.openweathermap.org/api_keys
+String softAPpass = "Deep1hough1";   // password for SoftAP config and WebServer logon, minimum 8 characters
+uint8_t brightness = 255;         // 0-255 display brightness default 255
 bool milTime = true;              // set false for 12hour clock
 String location;                  // zipcode or empty for geoIP location
 String timezone;                  // timezone from https://timezonedb.com/time-zones or empty for geoIP
-int threshold = 500;              // below this value display will dim, incrementally
-bool celsius = false;             // set true to display temp in celsius
+int threshold = 1000;              // below this value display will dim, incrementally
+bool celsius = true;             // set true to display temp in celsius
 String language = "en";           // font does not support all languages
-String countryCode = "US";        // default US, automatically set based on public IP address
+String countryCode = "DE";        // default US, automatically set based on public IP address
+static const char wday_name[][4] = {
+    "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
+  };
+  static const char mon_name[][4] = {
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  };
+String description;
+int Temp = 0;
+int id;
 
 // Syslog server wireless debugging and monitoring
 #ifdef SYSLOG
@@ -72,10 +85,9 @@ uint16_t syslogPort = 514;
 #ifdef DS18
 #include <OneWire.h>
 #include <DallasTemperature.h>
-#define ONE_WIRE_BUS D3
+#define ONE_WIRE_BUS 17 // D3 (or 0) for Wemos D1 mini (and WEMOS D1 ESP32) or 17 for ESP32-DEV and similar
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
-int Temp;
 #endif
 
 static const char* UserAgent PROGMEM = "myClock/1.0 (Arduino ESP8266)";
@@ -107,7 +119,11 @@ void setup() {
 
   readSPIFFS(); // fetch stored configuration
 
-  display.begin(16);
+  display.begin(16); //default for pxMatrix <=1.3.0 but PxMatrix.h needs to be modified for cutom ISP and setMuxDelay)
+  //display.begin(16, CLK, MOSI, MISO, SS); //for pxMatrix >=v1.6.0
+  //display.begin(16, 14, 13, 12, 4); // for Wemos D1 mini
+ // display.begin(16, 18, 23, 19, 21);  // for MH-ET LIVE D1 mini 
+  display.setMuxDelay(1,1,1,1,1);  //added for slow muxer
   display_ticker.attach(0.002, display_updater);
   display.clearDisplay();
   display.setFont(&TomThumb);
@@ -119,6 +135,7 @@ void setup() {
 
 #ifdef DS18
   sensors.begin();  // start temp sensor
+  delay(150);
 #endif
 
   startWiFi();
@@ -157,7 +174,7 @@ void setup() {
   delay(1000);
   startWebServer();
   displayDraw(brightness);  // initial time display before fetching weather and starting loop
-  getWeather();
+  description = getWeather();
 } // setup
 
 void loop() {
@@ -174,13 +191,62 @@ void loop() {
     int ss = timeinfo->tm_sec;
     int mm = timeinfo->tm_min;
     int hh = timeinfo->tm_hour;
+    int wd = timeinfo->tm_wday;
+    int dd = timeinfo->tm_mday;
+    int mon = timeinfo->tm_mon;
+    int my = mon+1;
+    int yy = timeinfo->tm_year;
+    yy = yy + 1900;
     if ((!milTime) && (hh > 12)) hh -= 12;
+    if (hh > 23) hh = 0;
     if (ss != pSS) {    // only update seconds if changed
       int s0 = ss % 10;
       int s1 = ss / 10;
       if (s0 != digit0.Value()) digit0.Morph(s0);
       if (s1 != digit1.Value()) digit1.Morph(s1);
       pSS = ss;
+       // id = weather["id"];
+        int i = id / 100;
+        switch (i) {
+          case 2: // Thunderstorms
+            display.setTextColor(myORANGE);
+            break;
+          case 3: // Drizzle
+            display.setTextColor(myBLUE);
+            break;
+          case 5: // Rain
+            display.setTextColor(myBLUE);
+            break;
+          case 6: // Snow
+            display.setTextColor(myWHITE);
+            break;
+          case 7: // Atmosphere
+            display.setTextColor(myYELLOW);
+            break;
+          case 8: // Clear/Clouds
+            display.setTextColor(myGRAY);
+            break;
+        }
+       if (ss == 0 || ss == 20 || ss == 40) {
+       int16_t  x1, y1, ww;
+       uint16_t w, h;
+       String date = ( String(wday_name[wd]) + " "+ String(dd, DEC) + ". " + String(mon_name[mon]) + " " + String(yy,DEC));
+       display.getTextBounds(date, 0, row4, &x1, &y1, &w, &h);
+       display.fillRect(0, 25, 64, 7, myBLACK);
+       if (w < 64) x1 = (68 - w) >> 1;         // center Date (getTextBounds returns too long)
+       display.setCursor(x1, row4);
+       //display.printf_P(PSTR("%.3s %02d. %.3s %04d"), wday_name[wd], dd, mon_name[mon], yy);
+       display.print(date);
+       }
+       if (ss == 10 || ss == 30 || ss == 50) {
+       int16_t  x1, y1, ww;
+       uint16_t w, h;
+       display.getTextBounds(description, 0, row4, &x1, &y1, &w, &h);
+       display.fillRect(0, 25, 64, 7, myBLACK);
+       if (w < 64) x1 = (68 - w) >> 1;         // center weather description (getTextBounds returns too long)
+       display.setCursor(x1, row4);
+       display.print(description);
+       }
 #ifdef LIGHT
       getLight();
 #endif
@@ -191,9 +257,12 @@ void loop() {
       if (m0 != digit2.Value()) digit2.Morph(m0);
       if (m1 != digit3.Value()) digit3.Morph(m1);
       pMM = mm;
-      OUT.printf_P(PSTR("%02d:%02d %d %d \r"), hh, mm, light, ESP.getFreeHeap()); // output debug once per minute
+      OUT.printf_P(PSTR("%02d:%02d %.3s %02d.%02d.%04d LDR:%d Mem:%d Weather:%s RoomTemp:%d \n"), hh, mm, wday_name[wd], dd, my, yy, light, ESP.getFreeHeap(), description, Temp); // output debug once per minute
     }
     if (hh != pHH) {    // update hours, if changed
+      //if (hh > 23) {
+       // hh = 0;
+      //}
       int h0 = hh % 10;
       int h1 = hh / 10;
       if (h0 != digit4.Value()) digit4.Morph(h0);
@@ -201,19 +270,32 @@ void loop() {
       pHH = hh;
     }
 #ifdef DS18
+    if (ss == 0 || ss == 10 || ss == 20 || ss == 30 || ss == 40 || ss == 50) { //dont querry sensor to often, gives wrong result otherwise, here every 10sec
     sensors.requestTemperatures();
     int t;
-    if (celsius) t = (int)round(sensors.getTempC(0));
-    else t = (int)round(sensors.getTempF(0));
-    if (t < -66 | t > 150) t = 0;
-    if (Temp != t) {
+    if (celsius == true) t = (int)round(sensors.getTempCByIndex(0));
+    if (celsius == false) t = (int)round(sensors.getTempFByIndex(0));
+    //OUT.printf_P(PSTR("RoomTemp: %d \n"), t);  //enable for testing sensor output
+    if (t < -10 | t > 99) t = Temp;
       Temp = t;
-      display.setCursor(0, row1);
-      display.printf_P(PSTR("% 2d"), Temp);
+      int tc;
+        if (celsius) tc = (int)round(Temp * 1.8) + 32;
+        else tc = (int)round(Temp);
+        if (tc <= 32) display.setTextColor(myCYAN);         // top row color based on temperature
+        else if (tc <= 50) display.setTextColor(myLTBLUE);
+        else if (tc <= 60) display.setTextColor(myBLUE);
+        else if (tc <= 78) display.setTextColor(myGREEN);
+        else if (tc <= 86) display.setTextColor(myYELLOW);
+        else if (tc <= 95) display.setTextColor(myORANGE);
+        else if (tc > 95) display.setTextColor(myRED);
+        else display.setTextColor(myColor);
+      display.fillRect(0, 0, 10, 6, myBLACK);
+      display.setCursor(3, row1);
+      display.printf_P(PSTR("%2d"), Temp);
     }
 #endif
     pNow = now;
-    if (now > wDelay) getWeather(); // fetch weather again if enough time has passed
+    if (now > wDelay) description = getWeather(); // fetch weather again if enough time has passed
   }
 } // loop
 
@@ -224,7 +306,7 @@ void displayDraw(uint8_t b) { // clear display and draw all digits of current ti
   time_t now = time(nullptr);
   int ss = now % 60;
   int mm = (now / 60) % 60;
-  int hh = (now / (60 * 60)) % 24;
+  int hh = ((now / (60 * 60)) % 24);  //+2;// added 2h for timezone until 24h display is fixed
   if ((!milTime) && (hh > 12)) hh -= 12;
   OUT.printf_P(PSTR("%02d:%02d\r"), hh, mm);
   digit1.DrawColon(myColor);
@@ -235,7 +317,7 @@ void displayDraw(uint8_t b) { // clear display and draw all digits of current ti
   digit3.Draw(mm / 10, myColor);
   digit4.Draw(hh % 10, myColor);
   digit5.Draw(hh / 10, myColor);
-  pNow = now;
+  pNow = -10; //test for resetting clock dispaly after getting NTP time
 }
 
 #ifdef LIGHT

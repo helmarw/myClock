@@ -13,13 +13,21 @@
 #include <Ticker.h>
 Ticker display_ticker;
 
-#define P_LAT 16
-#define P_A 5
-#define P_B 4
-#define P_C 15
-#define P_D 12
-#define P_E 0   // not needed on 64x32
-#define P_OE 2
+//#define P_LAT 16
+//#define P_A 5
+//#define P_B 4
+//#define P_C 15
+//#define P_D 12
+//#define P_E 0   // not needed on 64x32
+//#define P_OE 2
+
+// for MH-ET LIVE D1 min
+#define P_LAT 26
+#define P_A 22
+#define P_B 21
+#define P_C 5
+#define P_D 19
+#define P_OE 16
 
 PxMATRIX display(64, 32, P_LAT, P_OE, P_A, P_B, P_C, P_D);
 
@@ -59,7 +67,7 @@ void display_updater() {
 portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
 void IRAM_ATTR display_updater() {
   portENTER_CRITICAL_ISR(&timerMux);
-  display.display(15);
+  display.display(30);
   portEXIT_CRITICAL_ISR(&timerMux);
 }
 #endif
@@ -80,7 +88,7 @@ const uint16_t myCYAN = display.color565(0, 255, 255);
 const uint16_t myMAGENTA = display.color565(255, 0, 255);
 const uint16_t myGRAY = display.color565(102, 102, 102);
 const uint16_t myBLACK = display.color565(0, 0, 0);
-uint16_t myColor = myGREEN;
+uint16_t myColor = myLTBLUE;
 
 Digit digit0(&display, 0, 63 - 1 - 9 * 1, 9, myColor);
 Digit digit1(&display, 0, 63 - 1 - 9 * 2, 9, myColor);
