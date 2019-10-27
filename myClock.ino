@@ -3,7 +3,7 @@
      distributed under the terms of the MIT License
      Switching between ESP8266 and ESP32 platform requires deleting preferences.txt which the update script will do automatically when updating core.
      Designed to run on a Wemos-D1-Mini or NodeMCU, configured for CPU Freq 160Mhz and Flash size 4M (1M SPIFFS). 
-     notice: i treide for different ESP8266 boards, and non of them i got to work, so better use an ESP32, e.g. MH-ET LIVE D1 mini, that works for me at least
+     notice: i tried four different ESP8266 boards, and non of them i got to work, so better use an ESP32, e.g. MH-ET LIVE D1 mini, that works for me at least
      for resetting flash in ESP use "esptool.py --port /dev/cu.SLAB_USBtoUART  erase_flash" or simply "esptool.py erase_flash" will choose port automatically
      use "pip install esptool" for installing esptool in commandline    
 */
@@ -125,7 +125,7 @@ void setup() {
   //display.begin(16, CLK, MOSI, MISO, SS); //for pxMatrix >=v1.6.0
   //display.begin(16, 14, 13, 12, 4); // for Wemos D1 mini
  // display.begin(16, 18, 23, 19, 21);  // for MH-ET LIVE D1 mini 
-  display.setMuxDelay(1,1,1,1,1);  //added for slow muxer
+  display.setMuxDelay(2,2,2,2,2);  //added for slow muxer
   display_ticker.attach(0.002, display_updater);
   display.clearDisplay();
   display.setFont(&TomThumb);
@@ -207,8 +207,7 @@ void loop() {
       if (s0 != digit0.Value()) digit0.Morph(s0);
       if (s1 != digit1.Value()) digit1.Morph(s1);
       pSS = ss;
-       // id = weather["id"];
-        int i = id / 100;
+        int i = id / 100;  // id from getWeather()
         switch (i) {
           case 2: // Thunderstorms
             display.setTextColor(myORANGE);
@@ -261,10 +260,8 @@ void loop() {
       pMM = mm;
       OUT.printf_P(PSTR("%02d:%02d %3s %02d.%02d.%04d LDR:%d MEM:%d %s DS18:%d \n"), hh, mm, wday_name[wd], dd, my, yy, light, ESP.getFreeHeap(), description.c_str(), Temp); // output debug once per minute
     }
+    //if (hh >= 23) hh = 0;
     if (hh != pHH) {    // update hours, if changed
-      //if (hh > 23) {
-       // hh = 0;
-      //}
       int h0 = hh % 10;
       int h1 = hh / 10;
       if (h0 != digit4.Value()) digit4.Morph(h0);
@@ -308,7 +305,7 @@ void displayDraw(uint8_t b) { // clear display and draw all digits of current ti
   time_t now = time(nullptr);
   int ss = now % 60;
   int mm = (now / 60) % 60;
-  int hh = ((now / (60 * 60)) % 24);  //+2;// added 2h for timezone until 24h display is fixed
+  int hh = ((now / (60 * 60)) % 24);  
   if ((!milTime) && (hh > 12)) hh -= 12;
   OUT.printf_P(PSTR("%02d:%02d\r"), hh, mm);
   digit1.DrawColon(myColor);
@@ -320,6 +317,7 @@ void displayDraw(uint8_t b) { // clear display and draw all digits of current ti
   digit4.Draw(hh % 10, myColor);
   digit5.Draw(hh / 10, myColor);
   pNow = -10; //test for resetting clock dispaly after getting NTP time
+  pHH = -10;
 }
 
 #ifdef LIGHT
