@@ -66,8 +66,7 @@ Switching between ESP8266 and ESP32 platform requires deleting preferences.txt w
 
 ### Modifications/fixes
 
-- added support for MH-ET LIVE D1 mini to PxMatrix.h v1.3.0. MH-ET LIVE D1 mini has different SPI ports than the Wemos d1 Mini    
-  (see pdf for changes). added the modifided PxMatrix.h as PxMatrix_mod.h to source
+- added support for MH-ET LIVE D1 mini to PxMatrix.h v1.3.0. MH-ET LIVE D1 mini has different SPI ports than the Wemos d1 Mini (see pdf for changes). added the modifided PxMatrix.h as PxMatrix_mod.h to source
 - added display of date
 - fixed an issue when reading temperature from DS18b20 sensor
 - fixed couple of issues when in 24h display mode
