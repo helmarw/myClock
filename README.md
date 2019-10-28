@@ -22,7 +22,8 @@ Supports display of indoor temperature with DS18B20 connected to D3 pin, pulled 
 
 Display wired following https://www.instructables.com/id/Morphing-Digital-Clock/
 
-Easy hookup using Wemos Matrix Shield from https://github.com/hallard/WeMos-Matrix-Shield (compatible with MH-ET LIVE D1 mini)
+Easy hookup using Wemos Matrix Shield from https://github.com/hallard/WeMos-Matrix-Shield 
+Compatible with MH-ET LIVE D1 mini, i ordered the Shield here: https://aisler.net/p/DRGKVMVA
 
 Morphing digits code from https://github.com/hwiguna/HariFun_166_Morphing_Clock
 
