@@ -52,9 +52,9 @@ Stream & OUT = SerialBT;
 Stream & OUT = Serial;
 #endif
 
-String tzKey = "YK79A4XZSC3U";    // API key from https://timezonedb.com/register
-String owKey = "e0ca5d834d0d4c8d23e76e5a53b0e86e";  // API key from https://home.openweathermap.org/api_keys
-String softAPpass = "Deep1hough1";   // password for SoftAP config and WebServer logon, minimum 8 characters
+String tzKey = "fill_in_your_own";    // API key from https://timezonedb.com/register
+String owKey = "fill_in_your_own";  // API key from https://home.openweathermap.org/api_keys
+String softAPpass = "ChangeMe";   // password for SoftAP config and WebServer logon, minimum 8 characters
 uint8_t brightness = 255;         // 0-255 display brightness default 255
 bool milTime = true;              // set false for 12hour clock
 String location;                  // zipcode or empty for geoIP location
