@@ -11,7 +11,7 @@ Recommended enclosure for myClock made of a [shadowbox frame from Michaels](http
 Displays accurate time and current weather on a 64x32 pixel display. Sets timezone automatically from geoIP, uses the ESP's native NTP for time, and accepts OTA updates. Local WebServer allows updating and configuration, including color-picker to set digits color.
 
 Designed to run on a Wemos-D1-Mini or NodeMCU, configured for CPU Freq 160Mhz and Flash size 4M (1M SPIFFS). Known to work on D1-mini-lite, with Flash size 1M (64k SPIFFS), and now also supports ESP32. 
-Comment: I recommend MH-ET LIVE D1 mini
+I recommend using the ESP32 MH-ET LIVE D1 mini, ESP8266 didnt work work for me.
 
 Unwanted Serial output may be directed to NullStream, or on ESP32 output can be sent to Bluetooth.
 
