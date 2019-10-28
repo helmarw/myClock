@@ -58,7 +58,7 @@ https://github.com/PaulStoffregen/OneWire if DS18B20 used. (im using v2.3.5 )
 
 ### Notes
 
-Switching between ESP8266 and ESP32 platform requires deleting preferences.txt which the update script will do automatically when updating core. (Comment: did that too bit still ESP8266 refused to work for me)
+Switching between ESP8266 and ESP32 platform requires deleting preferences.txt which the update script will do automatically when updating core. (Comment: did that too but still ESP8266 refused to work for me)
 
 ### Modifications/fixes
 
