@@ -52,9 +52,10 @@ Stream & OUT = SerialBT;
 Stream & OUT = Serial;
 #endif
 
+// API keys and Password can be changed in the source code or via Webserver
 String tzKey = "fill_in_your_own";    // API key from https://timezonedb.com/register
 String owKey = "fill_in_your_own";  // API key from https://home.openweathermap.org/api_keys
-String softAPpass = "ChangeMe";   // password for SoftAP config and WebServer logon, minimum 8 characters
+String softAPpass = "ChangeMeNow";   // password for SoftAP config and WebServer logon, minimum 8 characters
 uint8_t brightness = 255;         // 0-255 display brightness default 255
 bool milTime = true;              // set false for 12hour clock
 String location;                  // zipcode or empty for geoIP location
