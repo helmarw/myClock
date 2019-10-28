@@ -51,7 +51,7 @@ https://github.com/2dom/PxMatrix (i could not get v 1.6.0 to work, so i used my 
 
 https://github.com/tzapu/WiFiManager (im using v1.0.0)
 
-https://github.com/arcao/Syslog if rsyslog functionality desired. (it compiles with v2.0.0, but never used it, so i left it disabled)
+https://github.com/arcao/Syslog for rsyslog functionality (it compiles with v2.0.0, but never used it, so i left it disabled)
 
 https://github.com/milesburton/Arduino-Temperature-Control-Library if DS18B20 used (im using v3.8.0)
 
