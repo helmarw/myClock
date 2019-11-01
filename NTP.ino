@@ -107,15 +107,19 @@ void setNTP(const String tz) {
   time_t now = time(nullptr);
   struct tm * calendar;
   calendar = localtime(&now);
-  calendar->tm_mday++;    // calculate tomorrow
-  calendar->tm_hour = 2;  // at 2am
-  calendar->tm_min = 0;
+  //calendar->tm_mday++;    // calculate tomorrow
+  //calendar->tm_hour = 2;  // at 2am
+  calendar->tm_mday;    // every day
+  calendar->tm_hour++;  // every hour
+  calendar->tm_min = 0;  
   calendar->tm_sec = 0;
   TWOAM = mktime(calendar);
   String t = ctime(&TWOAM);
   t.trim();
   OUT.print(F("setNTP: next timezone check @ "));
   OUT.println(t);
+  pNow = -10; //test for resetting clock dispaly after getting NTP time
+  pHH = -10;
 #ifdef SYSLOG
   syslog.logf("setNTP: %s (%d)", timezone.c_str(), int(offset / 3600));
 #endif

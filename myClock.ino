@@ -2,10 +2,10 @@
      Copyright (c) 2019 David M Denney <dragondaud@gmail.com>
      distributed under the terms of the MIT License
      Switching between ESP8266 and ESP32 platform requires deleting preferences.txt which the update script will do automatically when updating core.
-     Designed to run on a Wemos-D1-Mini or NodeMCU, configured for CPU Freq 160Mhz and Flash size 4M (1M SPIFFS).
+     Designed to run on a Wemos-D1-Mini or NodeMCU, configured for CPU Freq 160Mhz and Flash size 4M (1M SPIFFS). 
      notice: i tried four different ESP8266 boards, and non of them i got to work, so better use an ESP32, e.g. MH-ET LIVE D1 mini, that works for me at least
      for resetting flash in ESP use "esptool.py --port /dev/cu.SLAB_USBtoUART  erase_flash" or simply "esptool.py erase_flash" will choose port automatically
-     use "pip install esptool" for installing esptool in commandline
+     use "pip install esptool" for installing esptool in commandline    
 */
 
 //  ESP8266 version 2.5.2 required https://github.com/esp8266/Arduino
@@ -52,10 +52,9 @@ Stream & OUT = SerialBT;
 Stream & OUT = Serial;
 #endif
 
-// API keys and Password can be changed in the source code or via Webserver
 String tzKey = "fill_in_your_own";    // API key from https://timezonedb.com/register
 String owKey = "fill_in_your_own";  // API key from https://home.openweathermap.org/api_keys
-String softAPpass = "ChangeMeNow";   // password for SoftAP config and WebServer logon, minimum 8 characters
+String softAPpass = "ChangeMe";   // password for SoftAP config and WebServer logon, minimum 8 characters
 uint8_t brightness = 255;         // 0-255 display brightness default 255
 bool milTime = true;              // set false for 12hour clock
 String location;                  // zipcode or empty for geoIP location
@@ -67,7 +66,7 @@ String countryCode = "DE";        // default US, automatically set based on publ
 static const char wday_name[][4] = {
     "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
   };
-  static const char mon_name[][4] = {
+static const char mon_name[][4] = {
     "Jan", "Feb", "Mar", "Apr", "May", "Jun",
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
   };
@@ -125,7 +124,7 @@ void setup() {
   display.begin(16); //default for pxMatrix <=1.3.0 but PxMatrix.h needs to be modified for cutom ISP and setMuxDelay, added as PxMatrix_mod.h)
   //display.begin(16, CLK, MOSI, MISO, SS); //for pxMatrix >=v1.6.0
   //display.begin(16, 14, 13, 12, 4); // for Wemos D1 mini
- // display.begin(16, 18, 23, 19, 21);  // for MH-ET LIVE D1 mini
+ // display.begin(16, 18, 23, 19, 21);  // for MH-ET LIVE D1 mini 
   display.setMuxDelay(2,2,2,2,2);  //added for slow muxer
   display_ticker.attach(0.002, display_updater);
   display.clearDisplay();
@@ -237,7 +236,6 @@ void loop() {
        display.fillRect(0, 25, 64, 7, myBLACK);
        if (w < 64) x1 = (68 - w) >> 1;         // center Date (getTextBounds returns too long)
        display.setCursor(x1, row4);
-       //display.printf_P(PSTR("%.3s %02d. %.3s %04d"), wday_name[wd], dd, mon_name[mon], yy);
        display.print(date);
        }
        if (ss == 10 || ss == 30 || ss == 50) {
@@ -270,12 +268,11 @@ void loop() {
       pHH = hh;
     }
 #ifdef DS18
-    if (ss == 0 || ss == 10 || ss == 20 || ss == 30 || ss == 40 || ss == 50) { //dont querry sensor to often, gives wrong result otherwise, here every 10sec
+    if (ss == 3 || ss == 13 || ss == 23 || ss == 33 || ss == 43 || ss == 53) { //dont querry sensor to often, gives wrong result otherwise, here every 10sec
     sensors.requestTemperatures();
     int t;
     if (celsius == true) t = (int)round(sensors.getTempCByIndex(0));
     if (celsius == false) t = (int)round(sensors.getTempFByIndex(0));
-    //OUT.printf_P(PSTR("RoomTemp: %d \n"), t);  //enable for testing sensor output
     if (t < -10 | t > 99) t = Temp;
       Temp = t;
       int tc;
@@ -306,7 +303,7 @@ void displayDraw(uint8_t b) { // clear display and draw all digits of current ti
   time_t now = time(nullptr);
   int ss = now % 60;
   int mm = (now / 60) % 60;
-  int hh = ((now / (60 * 60)) % 24);
+  int hh = ((now / (60 * 60)) % 24);  
   if ((!milTime) && (hh > 12)) hh -= 12;
   OUT.printf_P(PSTR("%02d:%02d\r"), hh, mm);
   digit1.DrawColon(myColor);
