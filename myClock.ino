@@ -189,7 +189,7 @@ void loop() {
   time_t now = time(nullptr); // get current time
   timeinfo = localtime(&now);
   if (now != pNow) { // skip ahead if still same time
-    if (now > TWOAM) setNTP(timezone);  // recheck timezone every day at 2am
+  //  if (now > TWOAM) setNTP(timezone);  // recheck timezone every day at 2am
     int ss = timeinfo->tm_sec;
     int mm = timeinfo->tm_min;
     int hh = timeinfo->tm_hour;
@@ -259,8 +259,8 @@ void loop() {
       pMM = mm;
       OUT.printf_P(PSTR("%02d:%02d %3s %02d.%02d.%04d LDR:%d MEM:%d %s DS18:%d \n"), hh, mm, wday_name[wd], dd, my, yy, light, ESP.getFreeHeap(), description.c_str(), Temp); // output debug once per minute
     }
-    //if (hh >= 23) hh = 0;
     if (hh != pHH) {    // update hours, if changed
+      setNTP(timezone);
       int h0 = hh % 10;
       int h1 = hh / 10;
       if (h0 != digit4.Value()) digit4.Morph(h0);
