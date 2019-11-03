@@ -52,6 +52,11 @@ static const char* serverOptions PROGMEM =
   "<tr><th><label for='celsius'>Celsius</label></th>\n"
   "<td><label class='switch'><input type='checkbox' id='celsius' name='celsius' %celsius%>"
   "<span class='slider round'></span></label></td></tr>\n"
+  "<tr><th><label for='t_offs'>Temp. Offset</label></th>\n"
+  "<td><input type='number' id='t_offsNum' name='t_offsNum' style='width: 3em'"
+  "min='-5' max='5' value='%t_offs%' oninput='t_offs.value=t_offsNum.value'> \n"
+  "<input type='range' id='t_offs' name='t_offs' "
+  "min='-5' max='5' value='%t_offs%' oninput='t_offsNum.value=t_offs.value'></td></tr>\n"
   "<tr><th><label for='language'>Language</label></th>\n"
   "<td><select name='language' id='language'>\n"
   "<option value='hr'>Croatian</option>\n"
@@ -153,6 +158,9 @@ void handleOptions() {
   int t = server.arg(F("threshold")).toInt();
   if (t) threshold = t;
   else threshold = 500;
+  int o = server.arg(F("t_offs")).toInt();
+  if (o) t_offs = o;
+  else t_offs = 0;  
   c = server.arg(F("milTime"));
   if (c == "on") milTime = true;
   else milTime = false;
@@ -201,7 +209,7 @@ void handleRoot() {
   sprintf(c, "#%06X", color565to888(myColor));
   String payload = String(serverHead);
 #ifdef DS18
-  payload += PSTR("<p><meter value='") + String(Temp) + PSTR("' min='-50' max='150'></meter> Temperature\n");
+  payload += PSTR("<p><meter value='") + String(Temp) + PSTR("' min='-50' max='150'></meter> Temperature: "+ String(Temp) + "\n");
 #endif
   payload += String(serverOptions);
   payload.replace(F("%host%"), String(HOST) + t);
@@ -210,6 +218,7 @@ void handleRoot() {
   payload.replace(F("%threshold%"), String(threshold));
   payload.replace(F("%milTime%"), milTime ? checked : "");
   payload.replace(F("%celsius%"), celsius ? checked : "");
+  payload.replace(F("%t_offs%"), String(t_offs));
   payload.replace(PSTR("'") + String(language) + PSTR("'"),
                   PSTR("'") + String(language) + PSTR("'") + PSTR(" selected"));
   payload.replace(F("%location%"), String(location));

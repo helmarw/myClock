@@ -73,6 +73,7 @@ static const char mon_name[][4] = {
 String description;
 int Temp = 0;
 int id;
+int t_offs = 0; //Temperature offset if the sensores are calibrated, otherwise default 0 (no offset)
 
 // Syslog server wireless debugging and monitoring
 #ifdef SYSLOG
@@ -274,7 +275,7 @@ void loop() {
     if (celsius == true) t = (int)round(sensors.getTempCByIndex(0));
     if (celsius == false) t = (int)round(sensors.getTempFByIndex(0));
     if (t < -10 | t > 99) t = Temp;
-      Temp = t;
+      Temp = t + t_offs;
       int tc;
         if (celsius) tc = (int)round(Temp * 1.8) + 32;
         else tc = (int)round(Temp);

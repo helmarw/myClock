@@ -43,6 +43,7 @@ bool parseJson(JsonObject& json) {  // parse JSON object to running config
     myColor = json["myColor"];
     threshold = json["threshold"];
     celsius = json["celsius"];
+    t_offs = json["t_offs"]; //tempsensor offset
 #ifdef SYSLOG
     String sl = json["syslogSrv"];
     if (sl != "") syslogSrv = sl;
@@ -65,6 +66,7 @@ void writeSPIFFS() {  // convert running config to JSON object and write flash c
   json["threshold"] = threshold;
   json["celsius"] = celsius;
   json["language"] = language;
+  json["t_offs"] = t_offs; //tempsensor offset
 #ifdef SYSLOG
   json["syslogSrv"] = syslogSrv;
   json["syslogPort"] = syslogPort;
