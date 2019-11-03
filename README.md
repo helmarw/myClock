@@ -68,6 +68,7 @@ Switching between ESP8266 and ESP32 platform requires deleting preferences.txt w
 - added display of date (see pictures above)
 - fixed an issue when reading temperature from DS18b20 sensor
 - fixed couple of issues when in 24h display mode
+- added option for DS18 temperature offset
 - updated Readme.md
 
 ### Known Issues
