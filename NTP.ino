@@ -55,8 +55,11 @@ String getIPlocation() { // Using ip-api.com to discover public IP's location an
 int getOffset(const String tz) { // using timezonedb.com, return offset for zone name
   WiFiClient wifi;
   HTTPClient http;
-  String URL = PSTR("http://api.timezonedb.com/v2/list-time-zone?key=")
-               + tzKey + PSTR("&format=json&zone=") + tz;
+//  String URL = PSTR("http://api.timezonedb.com/v2/list-time-zone?key=")
+//               + tzKey + PSTR("&format=json&zone=") + tz;
+  String URL = PSTR("http://api.timezonedb.com/v2.1/get-time-zone?key=")
+               + tzKey + PSTR("&format=json&by=zone&country=") + countryCode + PSTR("&zone=") + tz;
+  
   String payload;
   int stat;
   http.setUserAgent(UserAgent);
@@ -72,8 +75,10 @@ int getOffset(const String tz) { // using timezonedb.com, return offset for zone
       DynamicJsonBuffer jsonBuffer;
       JsonObject& root = jsonBuffer.parseObject(payload);
       if (root.success()) {
-        JsonObject& zones = root["zones"][0];
-        offset = zones["gmtOffset"];
+       // JsonObject& zones = root["zones"][0];
+       // offset = zones["gmtOffset"];
+       offset = root["gmtOffset"];
+       OUT.println(PSTR("getOffset: ") + String(offset));
       } else {
 #ifdef SYSLOG
         syslog.log(F("getOffset JSON parse failed"));
@@ -98,7 +103,8 @@ void setNTP(const String tz) {
     delay(1000);
   }
   OUT.print(F("setNTP: configure NTP ..."));
-  configTime(offset, 0, PSTR("0.pool.ntp.org"), PSTR("1.pool.ntp.org"));
+  //configTime(offset, 0, PSTR("0.pool.ntp.org"), PSTR("1.pool.ntp.org"));
+  configTime(offset, 0, PSTR("2.pool.ntp.org"), PSTR("1.pool.ntp.org"));
   while (time(nullptr) < (30 * 365 * 24 * 60 * 60)) { // wait for NTP sync
     delay(1000);
     OUT.print(F("."));

@@ -62,7 +62,7 @@ String location;                  // zipcode or empty for geoIP location
 String timezone;                  // timezone from https://timezonedb.com/time-zones or empty for geoIP
 int threshold = 1000;              // below this value display will dim, incrementally
 bool celsius = true;             // set true to display temp in celsius
-bool daylightsaving = true;      // set true to display daylightsavings time true=+1hr, false=+0hrs
+bool daylightsaving = true;      // set true to display daylightsavings time true=+1hr, false=+0hrs not beeing used at the moment, seemed to be an API problem, which is hopefully fixed now
 String language = "en";           // font does not support all languages
 String countryCode = "DE";        // default US, automatically set based on public IP address
 static const char wday_name[][4] = {
@@ -171,7 +171,8 @@ void setup() {
   display.print(VERSION);
   display.setCursor(32, row4);
   display.setTextColor(myBLUE);
-  OUT.printf_P(PSTR("setup: %s, %s, %s \r\n"), location.c_str(), timezone.c_str(), milTime ? "true" : "false");
+//  OUT.printf_P(PSTR("setup: %s, %s, %s \r\n"), location.c_str(), timezone.c_str(), milTime ? "true" : "false");
+  OUT.printf_P(PSTR("setup: %s, %s, %s, %s \r\n"),location.c_str(), countryCode.c_str(), timezone.c_str(), milTime ? "true" : "false");
 #ifdef SYSLOG
   syslog.logf("setup: %s|%s|%s", location.c_str(), timezone.c_str(), milTime ? "true" : "false");
 #endif
@@ -196,7 +197,7 @@ void loop() {
     int ss = timeinfo->tm_sec;
     int mm = timeinfo->tm_min;
     int hh = timeinfo->tm_hour;
-    if (daylightsaving) hh = hh + 1;
+ //   if (daylightsaving) hh = hh + 1;
     int wd = timeinfo->tm_wday;
     int dd = timeinfo->tm_mday;
     int mon = timeinfo->tm_mon;
