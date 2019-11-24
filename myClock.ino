@@ -14,7 +14,8 @@
 //  ESP32 version 1.0.4 required https://github.com/espressif/arduino-esp32
 //  https://github.com/espressif/arduino-esp32#installation-instructions
 
-#include <ArduinoJson.h>        // works with version 5.13.5 (doesnt work with >=6) https://github.com/bblanchon/ArduinoJson/releases/latest
+//#include <ArduinoJson.h>        // works with version 5.13.5 (doesnt work with >=6) https://github.com/bblanchon/ArduinoJson/releases/latest
+#include "ArduinoJson/ArduinoJson_5x.h"  //included for comptibility reasons
 #include <WiFiManager.h>        // works with version 1.0.0 https://github.com/tzapu/WiFiManager/tree/development
 #include <ArduinoOTA.h>
 #include <FS.h>
@@ -61,6 +62,7 @@ String location;                  // zipcode or empty for geoIP location
 String timezone;                  // timezone from https://timezonedb.com/time-zones or empty for geoIP
 int threshold = 1000;              // below this value display will dim, incrementally
 bool celsius = true;             // set true to display temp in celsius
+bool daylightsaving = true;      // set true to display daylightsavings time true=+1hr, false=+0hrs
 String language = "en";           // font does not support all languages
 String countryCode = "DE";        // default US, automatically set based on public IP address
 static const char wday_name[][4] = {
@@ -194,6 +196,7 @@ void loop() {
     int ss = timeinfo->tm_sec;
     int mm = timeinfo->tm_min;
     int hh = timeinfo->tm_hour;
+    if (daylightsaving) hh = hh + 1;
     int wd = timeinfo->tm_wday;
     int dd = timeinfo->tm_mday;
     int mon = timeinfo->tm_mon;
@@ -202,6 +205,7 @@ void loop() {
     yy = yy + 1900;
     if ((!milTime) && (hh > 12)) hh -= 12;
     if (hh > 23) hh = 0;
+    if (hh > 24) hh = 1;
     if (ss != pSS) {    // only update seconds if changed
       int s0 = ss % 10;
       int s1 = ss / 10;

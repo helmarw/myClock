@@ -49,6 +49,9 @@ static const char* serverOptions PROGMEM =
   "<tr><th><label for='milTime'>24hour Time</label></th>\n"
   "<td><label class='switch'><input type='checkbox' id='milTime' name='milTime' %milTime%>"
   "<span class='slider round'></span></label></td></tr>\n"
+  "<tr><th><label for='daylightsaving'>Daylight savings</label></th>\n"
+  "<td><label class='switch'><input type='checkbox' id='daylightsaving' name='daylightsaving' %daylightsaving%>"
+  "<span class='slider round'></span></label></td></tr>\n"
   "<tr><th><label for='celsius'>Celsius</label></th>\n"
   "<td><label class='switch'><input type='checkbox' id='celsius' name='celsius' %celsius%>"
   "<span class='slider round'></span></label></td></tr>\n"
@@ -164,6 +167,9 @@ void handleOptions() {
   c = server.arg(F("milTime"));
   if (c == "on") milTime = true;
   else milTime = false;
+  c = server.arg(F("daylightsaving"));
+  if (c == "on") daylightsaving = true;
+  else daylightsaving = false;
   c = server.arg(F("celsius"));
   if (c == "on") celsius = true;
   else celsius = false;
@@ -217,6 +223,7 @@ void handleRoot() {
   payload.replace(F("%brightness%"), String(brightness));
   payload.replace(F("%threshold%"), String(threshold));
   payload.replace(F("%milTime%"), milTime ? checked : "");
+  payload.replace(F("%daylightsaving%"), daylightsaving ? checked : "");
   payload.replace(F("%celsius%"), celsius ? checked : "");
   payload.replace(F("%t_offs%"), String(t_offs));
   payload.replace(PSTR("'") + String(language) + PSTR("'"),

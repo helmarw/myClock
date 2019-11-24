@@ -40,6 +40,7 @@ bool parseJson(JsonObject& json) {  // parse JSON object to running config
     if (la != "") language = la;
     brightness = json["brightness"];
     milTime = json["milTime"];
+    daylightsaving = json["daylightsaving"];
     myColor = json["myColor"];
     threshold = json["threshold"];
     celsius = json["celsius"];
@@ -62,6 +63,7 @@ void writeSPIFFS() {  // convert running config to JSON object and write flash c
   json["owKey"] = owKey;
   json["brightness"] = brightness;
   json["milTime"] = milTime;
+  json["daylightsaving"] = daylightsaving;
   json["myColor"] = myColor;
   json["threshold"] = threshold;
   json["celsius"] = celsius;
