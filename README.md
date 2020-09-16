@@ -49,7 +49,7 @@ https://github.com/adafruit/Adafruit-GFX-Library (im using v1.6.1)
 
 https://github.com/2dom/PxMatrix (i could not get v 1.6.0 to work, so i used my own mod of the v1.3.0, PxMatrix_mod.h)
 
-https://github.com/tzapu/WiFiManager (im using v1.0.0) (and for the lazy ones: check development tree ;) )
+https://github.com/tzapu/WiFiManager (im using v1.0.0) (and for the lazy ones: check development branch ;) )
 
 https://github.com/arcao/Syslog for rsyslog functionality (it compiles with v2.0.0, but never used it, so i left it disabled)
 
