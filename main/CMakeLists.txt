@@ -1,0 +1,32 @@
+idf_component_register(
+    SRCS
+        "app_main.cpp"
+        "app_config.cpp"
+        "clock_theme.cpp"
+        "matrix_display.cpp"
+        "digit.cpp"
+        "tiny_font.cpp"
+        "timezone_utils.cpp"
+        "weather_service.cpp"
+        "sensor_service.cpp"
+        "wifi_manager.cpp"
+        "wifi_time.cpp"
+        "web_server.cpp"
+    INCLUDE_DIRS "."
+    REQUIRES
+        nvs_flash
+        esp_wifi
+        esp_event
+        esp_netif
+        esp_http_server
+        esp_http_client
+        app_update
+        esp_app_format
+        esp_timer
+        mbedtls
+        json
+        esp_driver_gpio
+        esp_driver_spi
+        esp_adc
+        lwip
+)

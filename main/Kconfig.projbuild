@@ -1,0 +1,66 @@
+menu "myClock"
+
+config MYCLOCK_WIFI_SSID
+    string "Initial WiFi SSID"
+    default ""
+    help
+        Initial WLAN for the first flash. After boot, WiFi is stored in NVS
+        and can be changed from the web interface.
+
+config MYCLOCK_WIFI_PASSWORD
+    string "Initial WiFi password"
+    default ""
+    help
+        Initial WLAN password. May be empty for an open network.
+
+config MYCLOCK_ADMIN_PASSWORD
+    string "Initial web/admin password"
+    default "ChangeMe"
+    help
+        Login is admin. The same password is used for the fallback AP when it
+        has at least 8 characters. Change it in the web interface after first login.
+
+config MYCLOCK_TZ
+    string "Initial POSIX timezone"
+    default "CET-1CEST,M3.5.0,M10.5.0/3"
+    help
+        Initial timezone for Germany/Berlin including daylight-saving time.
+        Stage 3 normally manages this through the web UI using an IANA name.
+
+config MYCLOCK_24H
+    bool "24-hour clock"
+    default y
+
+config MYCLOCK_BRIGHTNESS
+    int "Display brightness (1..255)"
+    range 1 255
+    default 255
+
+config MYCLOCK_OPENWEATHER_KEY
+    string "Initial OpenWeather API key"
+    default ""
+    help
+        Optional. It can also be entered later in the web interface.
+
+config MYCLOCK_WEATHER_ZIP
+    string "Initial weather postal code"
+    default ""
+
+config MYCLOCK_WEATHER_COUNTRY
+    string "Initial weather country code"
+    default "DE"
+
+config MYCLOCK_WEATHER_LANGUAGE
+    string "Initial weather language"
+    default "en"
+
+config MYCLOCK_WEATHER_CELSIUS
+    bool "Use Celsius/metric weather units"
+    default y
+
+config MYCLOCK_WEATHER_INTERVAL_MIN
+    int "Weather refresh interval in minutes"
+    range 5 180
+    default 15
+
+endmenu

@@ -1,77 +1,235 @@
-# myClock
-## v0.10.4 PRE-RELEASE mod by helmarw
-### Copyright 2019 by David M Denney &lt;dragondaud@gmail.com&gt;
+# myClock for ESP-IDF
 
-Master repository: https://github.com/dragondaud/myClock
+Modern ESP-IDF port of **myClock**, a 64×32 HUB75 LED matrix clock with morphing digits, weather information, local sensors, web configuration and OTA updates.
 
-<img src="docs/myClock-parts.png" height="120">  <img src="docs/myClock-front_date.png" height="120"> <img src="docs/myClock-front_weather.png" height="120"> <img src="docs/myClock-back.png" height="120">
+This version is intended for the existing **ESP-WROOM-32 / MH-ET LIVE D1 mini** hardware used by the original project and has been developed against **ESP-IDF 5.5.4**.
 
-Displays accurate time, date, room temperature and current weather conditions on a 64x32 pixel display. Sets timezone automatically from geoIP, uses the ESP's native NTP for time, and accepts OTA updates. Local WebServer allows updating and configuration, including color-picker to set digits color.
+## Features
 
-Designed to run on a Wemos-D1-Mini or NodeMCU, configured for CPU Freq 160Mhz and Flash size 4M (1M SPIFFS). Known to work on D1-mini-lite, with Flash size 1M (64k SPIFFS), and now also supports ESP32. 
-I recommend using a [ESP32 MH-ET LIVE D1 mini](https://ebay.us/jSmSkc) (you'll find them on ebay, [aliexpess](https://de.aliexpress.com/item/32815530502.html), bangood a.s.o.), ESP8266 devices didnt work for me, i tried both of the above....
+- 64×32 P4 HUB75 LED matrix
+- Morphing HH:MM:SS clock display
+- Full display redraw after NTP synchronization
+- 12/24-hour mode
+- NTP time synchronization
+- Browser-assisted timezone selection, with `Europe/Berlin` as default
+- No TimeZoneDB API key required
+- OpenWeather current weather display
+- Configurable OpenWeather API key, postal code, country, language and refresh interval
+- DS18B20 indoor temperature sensor
+- LDR-based automatic display brightness
+- Configurable clock color using presets, a color picker, or a direct `#RRGGBB` value
+- Centered upper information row
+- Web configuration with HTTP Basic Authentication
+- Wi-Fi scan listing all visible SSIDs/BSSIDs
+- Automatic selection of the strongest access point with the configured SSID on boot/reconnect
+- Setup/fallback access point if no usable Wi-Fi configuration is available
+- Web OTA firmware update
+- OTA feedback: briefly shows `Updating`, then blanks the panel during flash writes to avoid distracting flicker
+- Persistent settings in NVS
 
-For the display i use a P4 64x32 RGB LED Matrix Display, which you can find e.g. on [ebay](https://ebay.us/l1ljDK) or [aliexpress](https://de.aliexpress.com/item/32380311346.html) and elsewhere ...
+## Hardware / GPIO assignment
 
-Unwanted Serial output may be directed to NullStream, or on ESP32 output can be sent to Bluetooth.
+The current firmware preserves the GPIO assignment of the working hardware. Do not change these values unless the matrix wiring is changed as well.
 
-Postal code is used to specify weather display location. Time Zone must be from [time zone list](https://timezonedb.com/time-zones).
+| Function | GPIO |
+|---|---:|
+| HUB75 LAT | 26 |
+| HUB75 A | 22 |
+| HUB75 B | 21 |
+| HUB75 C | 5 |
+| HUB75 D | 19 |
+| HUB75 OE | 16 |
+| HUB75 CLK | 18 |
+| HUB75 MOSI/data | 23 |
+| DS18B20 | 17 |
+| LDR / A0 | 36 |
 
-Uses LDR, pulled low with a 10k resistor, on analog input to set display brightness when below threshold value set in config.
+The matrix driver uses the original project's SPI/multiplex approach rather than replacing the hardware interface with a different HUB75 DMA pinout.
 
-Supports display of indoor temperature with DS18B20 connected to D3 pin, pulled high with a 4K7 resistor.
+## Requirements
 
-Display wired following https://www.instructables.com/id/Morphing-Digital-Clock/
+- ESP-IDF **5.5.x** (developed/tested with 5.5.4)
+- ESP32 target
+- 4 MB flash
+- Internet connection during the first build so the ESP-IDF Component Manager can fetch:
+  - `espressif/ds18b20`
+  - `espressif/onewire_bus`
 
-Easy hookup using Wemos Matrix Shield from https://github.com/hallard/WeMos-Matrix-Shield 
+## Build
 
-Compatible with MH-ET LIVE D1 mini, i ordered the Shield here: https://aisler.net/p/DRGKVMVA
+Clone/download the repository and open an ESP-IDF shell:
 
-Morphing digits code from https://github.com/hwiguna/HariFun_166_Morphing_Clock
+```bash
+idf.py set-target esp32
+idf.py menuconfig
+idf.py build
+```
 
-Lookup TimeZone from IP using: http://ip-api.com/ (no API key required).
+Optional initial values can be entered under **Component config → myClock**. They are only intended for the first boot; settings can later be changed from the web interface and are stored in NVS.
 
-Lookup Offset from TimeZone using: https://timezonedb.com/ which requires an API key to use.
+Flash by USB:
 
-Get current weather data from https://openweathermap.org/api which requires an API key to use.
+```bash
+idf.py -p /dev/cu.YOURPORT flash monitor
+```
 
-### Requires
+On Linux the serial port is commonly something such as `/dev/ttyUSB0` or `/dev/ttyACM0`.
 
-Arduino IDE 1.8.9, for your platform, from https://www.arduino.cc/en/Main/Software. (works with v1.8.10 too)
+## First start / setup AP
 
-Arduino core for ESP8266, version 2.5.0: https://github.com/esp8266/Arduino (same results with v2.5.2, not working for me)
+If no Wi-Fi SSID is configured, myClock starts a local setup access point:
 
-or Arduino core for ESP32, from: https://github.com/espressif/arduino-esp32/releases/tag/1.0.2 (im using v1.0.4)
+```text
+SSID: myClock-XXXXXX
+IP:   192.168.4.1
+```
 
-https://github.com/bblanchon/ArduinoJson/tree/5.x.  (im using v5.13.5, v6x is NOT working !!!)
+Initial credentials:
 
-https://github.com/adafruit/Adafruit-GFX-Library (im using v1.6.1)
+```text
+Web user:     admin
+Web password: ChangeMe
+AP password:  ChangeMe
+```
 
-https://github.com/2dom/PxMatrix (i could not get v 1.6.0 to work, so i used my own mod of the v1.3.0, PxMatrix_mod.h)
+Open `http://192.168.4.1/`, configure Wi-Fi and change the admin password.
 
-https://github.com/tzapu/WiFiManager (im using v1.0.0) (and for the lazy ones: check development branch ;) )
+> **Security:** `ChangeMe` is intentionally only a first-start default. Change the admin password before leaving the device on an untrusted network.
 
-https://github.com/arcao/Syslog for rsyslog functionality (it compiles with v2.0.0, but never used it, so i left it disabled)
+If a configured Wi-Fi cannot be reached, the fallback AP can also be used for recovery/configuration.
 
-https://github.com/milesburton/Arduino-Temperature-Control-Library if DS18B20 used (im using v3.8.0)
+## Wi-Fi / strongest AP selection
 
-https://github.com/PaulStoffregen/OneWire if DS18B20 used. (im using v2.3.5 )
+The web interface can scan and display all visible access points, including:
 
+- SSID
+- BSSID
+- channel
+- RSSI
+- current AP
+- strongest AP with the configured SSID
 
-### Notes
+When connecting, myClock scans for APs whose SSID exactly matches the configured SSID and selects the candidate with the strongest RSSI. The selection is repeated after a disconnect.
 
-Switching between ESP8266 and ESP32 platform requires deleting preferences.txt which the update script will do automatically when updating core. (Comment: did that too but still ESP8266 refused to work for me)
+This is deliberately **not continuous roaming**: while a connection remains stable, myClock stays on the current AP instead of repeatedly switching for small RSSI differences.
 
-### Modifications/fixes
+Example log output:
 
-- added support for MH-ET LIVE D1 mini to PxMatrix.h v1.3.0. MH-ET LIVE D1 mini has different SPI ports than the Wemos d1 Mini (see pdf for changes). added the modifided PxMatrix.h as PxMatrix_mod.h to source
-- added display of date (see pictures above)
-- fixed an issue when reading temperature from DS18b20 sensor
-- fixed couple of issues when in 24h display mode
-- added option for DS18 temperature offset
-- updated Readme.md
+```text
+I (...) wifi: Scanning for strongest AP matching SSID 'MyWiFi'
+I (...) wifi: Best AP: BSSID=AA:BB:CC:DD:EE:FF channel=6 RSSI=-52 dBm
+I (...) wifi: Connected: BSSID=AA:BB:CC:DD:EE:FF channel=6 RSSI=-53 dBm
+```
 
-### Known Issues
+## Timezone
 
-- i could not get it to work with ESP8266, like Wemos D1 mini or NodeMCU 12E, after setting SSID+Password device is locked in    bootloop. Dont know what went wrong yet. I strongly recommend using an ESP32, for me the MH-ET LIVE D1 mini with WeMos-Matrix-Shield works very well!
+The web interface can take the browser's IANA timezone, for example `Europe/Berlin`, and maps supported zones to the POSIX timezone string used by ESP-IDF/newlib.
 
+The default is:
+
+```text
+Europe/Berlin
+CET-1CEST,M3.5.0,M10.5.0/3
+```
+
+This handles CET/CEST automatically and removes the need for the old TimeZoneDB API request.
+
+## Weather
+
+Weather uses the OpenWeather current-weather API. Configure these values in the web interface:
+
+- API key
+- postal code
+- country code
+- language
+- metric/imperial units
+- refresh interval
+
+The clock continues to operate normally if weather is disabled or no valid API key is configured.
+
+## Sensors
+
+### DS18B20
+
+- GPIO17
+- indoor temperature shown in the upper information row
+- configurable temperature offset
+
+### LDR
+
+- A0 / GPIO36
+- automatic display brightness
+- configurable threshold
+- smoothed readings to reduce brightness jitter
+
+## Clock color
+
+The large time digits and colons can be configured independently of the weather/status colors.
+
+Available controls:
+
+- preset themes
+- browser color picker
+- direct hexadecimal RGB entry, e.g. `#FF4C04`
+
+Because the matrix refresh method has limited per-channel intensity levels, the physical LED color can differ somewhat from the browser preview.
+
+## OTA update
+
+Build a new firmware image:
+
+```bash
+idf.py build
+```
+
+Upload this file in the web interface:
+
+```text
+build/myClock_idf.bin
+```
+
+At the start of OTA the matrix briefly displays `Updating`. Before flash erase/write begins, HUB75 output is disabled via OE and the matrix remains dark until reboot. This avoids the irregular-looking refresh flicker caused by flash operations.
+
+## Repository hygiene / credentials
+
+The repository intentionally includes `sdkconfig.defaults`, but **does not include `sdkconfig`**.
+
+`menuconfig` can write Wi-Fi credentials and API keys into the local `sdkconfig`, so `.gitignore` excludes:
+
+```text
+sdkconfig
+sdkconfig.old
+build/
+managed_components/
+```
+
+Before pushing a public fork, check staged files with:
+
+```bash
+git status
+git diff --cached
+```
+
+Do not commit real Wi-Fi passwords, admin passwords or API keys.
+
+## Project history and credits
+
+This ESP-IDF version is based on the `helmarw/myClock` project and preserves the original morphing-clock concept and hardware behavior.
+
+Original myClock author:
+
+- **David M Denney (dragondaud)**
+
+Original project:
+
+- `https://github.com/dragondaud/myClock`
+
+ESP-IDF port source/history:
+
+- `https://github.com/helmarw/myClock`
+
+The original project is distributed under the **MIT License**. The original copyright and license text are retained in [`LICENSE`](LICENSE).
+
+## License
+
+MIT — see [`LICENSE`](LICENSE).

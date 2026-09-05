@@ -1,3 +1,23 @@
-.tmp*
-*.tmp
-data
+# ESP-IDF build output
+build/
+managed_components/
+
+# Local ESP-IDF configuration - may contain Wi-Fi/API credentials
+sdkconfig
+sdkconfig.old
+
+# Generated firmware/debug artifacts
+*.bin
+*.elf
+*.map
+*.uf2
+
+# Local secrets / editor / OS files
+secrets.h
+secrets.hpp
+.env
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~
